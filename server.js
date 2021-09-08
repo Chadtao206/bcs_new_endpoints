@@ -6,10 +6,22 @@ const {
   modifyAttendance,
   me,
   dashboard,
+  coursework,
+  courseworkDetails,
+  updateSubmissionGrade,
 } = require("./api");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send(`Welcome to bootcampspot hidden apis!\n
+You can access the following endpoints:\n
+1. GET /sessions/{enrollmentId} - returns a list of sessions for a given enrollment(cohort)\n
+2. GET /session/detail/{sessionId} - returns details for a given session(has attendance information)\n
+3. POST /attendance/modify - modifies a student's attendance for a given session, body should be {sessionId, studentId, statusCode}\n
+4. GET /me - returns data related to the authenticated user`);
+});
 
 app.get("/sessions/:eid", async ({ params: { eid } }, res) => {
   try {
@@ -20,9 +32,9 @@ app.get("/sessions/:eid", async ({ params: { eid } }, res) => {
   }
 });
 
-app.get("/session/detail", async (req, res) => {
+app.get("/session/detail/:sid", async (req, res) => {
   try {
-    const { data } = await sessionDetails();
+    const { data } = await sessionDetails(req.params.sid);
     res.json(data);
   } catch (err) {
     console.log(err);
@@ -66,5 +78,42 @@ app.get("/dashboard", async (req, res) => {
     console.log(err);
   }
 });
+
+app.get("/coursework/:eid", async (req, res) => {
+  try {
+    const { data } = await coursework(req.params.eid);
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.get("/courseworkdetail/:aid", async ({ params: { aid } }, res) => {
+  try {
+    const { data } = await courseworkDetails(aid);
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.post(
+  "/updatesubmissiongrade",
+  async (
+    { body: { id = 921805, submissionId = 1018451, grade = "C+" } },
+    res
+  ) => {
+    try {
+      const { data } = await updateSubmissionGrade({
+        id,
+        submissionId,
+        grade,
+      });
+      res.json("updated!");
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
 
 app.listen(5000, () => console.log(`App is running on port ${5000}`));

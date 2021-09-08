@@ -39,3 +39,29 @@ module.exports.dashboard = (eid = 720326) =>
       enrollmentId: Number(eid),
     })
   );
+
+module.exports.coursework = (eid = 720326) =>
+  axios.post(
+    "https://bootcampspot.com/broker/coursework",
+    JSON.stringify({
+      enrollmentId: Number(eid),
+    })
+  );
+
+module.exports.courseworkDetails = (aid = 106371) =>
+  axios.post(
+    "https://bootcampspot.com/broker/courseworkDetail",
+    JSON.stringify({
+      assignmentId: Number(aid),
+    })
+  );
+
+module.exports.updateSubmissionGrade = ({ submissionId, id, grade }) =>
+  axios.post(
+    "https://bootcampspot.com/broker/updateSubmissionGrade",
+    JSON.stringify({
+      id,
+      submissionId,
+      grade,
+    })
+  );
